@@ -13,6 +13,19 @@ const Post = require("../models/Post"); // your Post model
 const verifyTokenMiddleware = require("../middleware/verifyToken");
 
 
+router.get("/approved", async (req, res) => {
+  try {
+    const data = await InstitutionFull.find({ status: "APPROVED" })
+      .select("officialName")
+      .lean();
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 router.post("/create", upload.single("file"), async (req, res) => {
   try {
     const post = new Post({
