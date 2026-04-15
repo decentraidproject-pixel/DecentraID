@@ -31,13 +31,15 @@ router.post("/create", upload.single("file"), async (req, res) => {
       verifiers
     } = req.body;
 
-    
-    let finalVerifiers = [];
-    if (verifiers) {
-      finalVerifiers = Array.isArray(verifiers)
-        ? verifiers
-        : [verifiers];
+    if (!userId) {
+      return res.status(400).json({ error: "UserId is required" });
     }
+
+    const finalVerifiers = Array.isArray(verifiers)
+      ? verifiers
+      : verifiers
+      ? [verifiers]
+      : [];
 
     const post = new Post({
       title,
@@ -57,10 +59,7 @@ router.post("/create", upload.single("file"), async (req, res) => {
       proofLink,
       file: req.file ? req.file.path : "",
 
-     
-      userId: mongoose.Types.ObjectId.isValid(userId)
-        ? new mongoose.Types.ObjectId(userId)
-        : null,
+      userId: new mongoose.Types.ObjectId(userId),
 
       userName,
       userEmail,
