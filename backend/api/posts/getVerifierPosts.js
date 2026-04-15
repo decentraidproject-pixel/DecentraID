@@ -55,7 +55,7 @@ router.post("/create", upload.single("file"), async (req, res) => {
       proofLink,
       file: req.file ? req.file.path : "",
 
-      userId,        
+      userId: new mongoose.Types.ObjectId(userId),       
       userName,
       userEmail,
 
