@@ -10,7 +10,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", require("./routes/institutionRoutes"));
+
 
 
 const adminAuthRoutes = require("./routes/adminAuth.routes");
