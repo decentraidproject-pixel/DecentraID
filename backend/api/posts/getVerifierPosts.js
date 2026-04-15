@@ -6,6 +6,8 @@ const UserFullDetails = require("../../models/UserFullDetails");
 const multer = require("multer");   
 const upload = multer({ dest: "uploads/" });
 
+const mongoose = require("mongoose"); // ✅ MUST be at top
+
 router.post("/create", upload.single("file"), async (req, res) => {
   try {
     console.log("BODY:", req.body);
@@ -55,7 +57,11 @@ router.post("/create", upload.single("file"), async (req, res) => {
       proofLink,
       file: req.file ? req.file.path : "",
 
-      userId: new mongoose.Types.ObjectId(userId),       
+     
+      userId: mongoose.Types.ObjectId.isValid(userId)
+        ? new mongoose.Types.ObjectId(userId)
+        : null,
+
       userName,
       userEmail,
 
@@ -67,11 +73,10 @@ router.post("/create", upload.single("file"), async (req, res) => {
     res.json({ message: "Post created successfully", post });
 
   } catch (err) {
-    console.error("CREATE ERROR:", err); 
+    console.error("CREATE ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });
-
 
 router.get("/verifier", verifyVerifier, async (req, res) => {
   try {
