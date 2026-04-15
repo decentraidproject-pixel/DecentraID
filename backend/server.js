@@ -28,11 +28,7 @@ const userRegisterRoute = require ("./api/users/register.js");
 app.use("/api/users", userRegisterRoute);
 
 
-const createPost = require("./api/posts/createPost");
-const getUserPosts = require("./api/posts/getUserPosts");
 
-app.use("/api/posts", createPost);
-app.use("/api/posts", getUserPosts);
 
 
 const approvedInstitutions = require("./api/institutions/getApprovedInstitutions");
