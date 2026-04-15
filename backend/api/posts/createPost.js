@@ -2,27 +2,73 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../../models/Post");
 
-router.post("/create", async (req, res) => {
-
+router.post("/create", upload.single("file"), async (req, res) => {
   try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
 
-    const { userId, title, description, verifiers } = req.body;
-
-    const newPost = new Post({
-      userId,
+    const {
       title,
       description,
+      category,
+      tags,
+      fromDate,
+      toDate,
+      duration,
+      location,
+      city,
+      feedback,
+      proofLink,
+      userId,
+      userName,
+      userEmail,
       verifiers
+    } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "UserId is required" });
+    }
+
+    const finalVerifiers = Array.isArray(verifiers)
+      ? verifiers
+      : verifiers
+      ? [verifiers]
+      : [];
+
+    const post = new Post({
+      title,
+      description,
+      category,
+      tags,
+
+      fromDate: fromDate || null,
+      toDate: toDate || null,
+      duration,
+
+      location,
+      city,
+
+      feedback,
+
+      proofLink,
+      file: req.file ? req.file.path : "",
+
+      userId: new mongoose.Types.ObjectId(userId),
+
+      userName,
+      userEmail,
+
+      verifiers: finalVerifiers
     });
 
-    await newPost.save();
+    await post.save();
 
-    res.json({ message: "Post saved" });
+    res.json({ message: "Post created successfully", post });
 
   } catch (err) {
-    res.status(500).json({ message: "Error saving post" });
+    console.error("CREATE ERROR:", err);
+    res.status(500).json({ error: err.message });
   }
-
 });
 
 module.exports = router;
