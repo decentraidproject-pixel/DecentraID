@@ -7,7 +7,10 @@ const UserFullDetails = require("../../models/UserFullDetails");
 
 router.get("/verifier", verifyVerifier, async (req, res) => {
   try {
-    const posts = await Post.find({ verifiers: req.verifierName });
+    const posts = await Post.find({
+      verifiers: req.verifierName
+    }).lean(); 
+
     res.json(posts);
   } catch (error) {
     console.error(error);
@@ -18,16 +21,17 @@ router.get("/verifier", verifyVerifier, async (req, res) => {
 
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
+
   try {
-    const posts = await Post.find({ userId })
-      .select("title description verifiers status approvedBy rejectedBy userScore")
-      .lean(); // convert to plain JS object
+    const posts = await Post.find({ userId }).lean(); 
+
     res.json(posts);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 router.post("/verify/:postId", verifyVerifier, async (req, res) => {
   const { postId } = req.params;
   const { decision } = req.body;
