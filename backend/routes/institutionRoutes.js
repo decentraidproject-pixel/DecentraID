@@ -13,6 +13,32 @@ const Post = require("../models/Post"); // your Post model
 const verifyTokenMiddleware = require("../middleware/verifyToken");
 
 
+router.post("/create", upload.single("file"), async (req, res) => {
+  try {
+    const post = new Post({
+      ...req.body,
+
+      userName: req.body.userName,
+      userEmail: req.body.userEmail,
+      userId: req.body.userId,
+
+      file: req.file ? req.file.path : "",
+
+      verifiers: Array.isArray(req.body.verifiers)
+        ? req.body.verifiers
+        : [req.body.verifiers],
+    });
+
+    await post.save();
+
+    res.json({ message: "Post created", post });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 router.get("/verifier", verifyTokenMiddleware, async (req, res) => {
   try {
     const verifierName = req.user.verifierName;
