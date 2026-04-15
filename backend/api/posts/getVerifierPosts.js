@@ -6,25 +6,66 @@ const UserFullDetails = require("../../models/UserFullDetails");
 
 router.post("/create", upload.single("file"), async (req, res) => {
   try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
+    const {
+      title,
+      description,
+      category,
+      tags,
+      fromDate,
+      toDate,
+      duration,
+      location,
+      city,
+      feedback,
+      proofLink,
+      userId,
+      userName,
+      userEmail,
+      verifiers
+    } = req.body;
+
+    
+    let finalVerifiers = [];
+    if (verifiers) {
+      finalVerifiers = Array.isArray(verifiers)
+        ? verifiers
+        : [verifiers];
+    }
+
     const post = new Post({
-      ...req.body,
+      title,
+      description,
+      category,
+      tags,
 
-      userName: req.body.userName,
-      userEmail: req.body.userEmail,
-      userId: req.body.userId,
+      fromDate: fromDate || null,
+      toDate: toDate || null,
+      duration,
 
+      location,
+      city,
+
+      feedback,
+
+      proofLink,
       file: req.file ? req.file.path : "",
 
-      verifiers: Array.isArray(req.body.verifiers)
-        ? req.body.verifiers
-        : [req.body.verifiers],
+      userId,        
+      userName,
+      userEmail,
+
+      verifiers: finalVerifiers
     });
 
     await post.save();
 
-    res.json({ message: "Post created", post });
+    res.json({ message: "Post created successfully", post });
+
   } catch (err) {
-    console.error(err);
+    console.error("CREATE ERROR:", err); 
     res.status(500).json({ error: err.message });
   }
 });
@@ -65,13 +106,12 @@ router.post("/verify/:postId", verifyVerifier, async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
-    const verifier = req.verifierName; // logged-in verifier
+    const verifier = req.verifierName; 
 
-    // Only allow selected verifiers
+    
     if (!post.verifiers.includes(verifier))
       return res.status(403).json({ message: "Not authorized" });
 
-    // Remove verifier from both approvedBy & rejectedBy first
     post.approvedBy = post.approvedBy.filter(v => v !== verifier);
     post.rejectedBy = post.rejectedBy.filter(v => v !== verifier);
 
