@@ -382,7 +382,7 @@ router.get("/admin/fulltype/:type", adminAuth, async (req, res) => {
   }
 });
 
-// ================= ADMIN DETAILS =================
+/* ================= ADMIN DETAILS =================
 router.get("/admin/details/:id", adminAuth, async (req, res) => {
   try {
     const id = req.params.id;
@@ -404,6 +404,41 @@ router.get("/admin/details/:id", adminAuth, async (req, res) => {
 
     res.json(institution);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+*/
+
+router.get("/admin/details/:id", adminAuth, async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    let institution = null;
+
+    
+    institution = await InstitutionFull.findById(id).lean();
+
+    
+    if (!institution) {
+      const basic = await InstitutionBasic.findById(id).lean();
+
+      if (basic && basic.fullInstitutionId) {
+        institution = await InstitutionFull.findById(
+          basic.fullInstitutionId
+        ).lean();
+      }
+    }
+
+    
+    if (!institution) {
+      return res.status(404).json({ message: "Institution not found" });
+    }
+
+    
+    res.json(institution);
+
+  } catch (error) {
+    console.error("DETAIL ERROR:", error);
     res.status(500).json({ error: error.message });
   }
 });
