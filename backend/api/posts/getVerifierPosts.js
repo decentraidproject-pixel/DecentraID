@@ -3,6 +3,8 @@ const router = express.Router();
 const Post = require("../../models/Post");
 const verifyVerifier = require("../../middleware/verifyVerifier");
 const UserFullDetails = require("../../models/UserFullDetails");
+const multer = require("multer");   
+const upload = multer({ dest: "uploads/" });
 
 router.post("/create", upload.single("file"), async (req, res) => {
   try {
