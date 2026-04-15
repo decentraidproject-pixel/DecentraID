@@ -6,7 +6,7 @@ const UserFullDetails = require("../../models/UserFullDetails");
 const multer = require("multer");   
 const upload = multer({ dest: "uploads/" });
 
-const mongoose = require("mongoose"); // ✅ MUST be at top
+const mongoose = require("mongoose"); 
 
 router.post("/create", upload.single("file"), async (req, res) => {
   try {
