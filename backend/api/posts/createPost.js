@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../../models/Post");
 
+const multer = require("multer");   
+const upload = multer({ dest: "uploads/" });
+
 router.post("/create", upload.single("file"), async (req, res) => {
   try {
     console.log("BODY:", req.body);
