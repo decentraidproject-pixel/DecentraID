@@ -4,6 +4,31 @@ const Post = require("../../models/Post");
 const verifyVerifier = require("../../middleware/verifyVerifier");
 const UserFullDetails = require("../../models/UserFullDetails");
 
+router.post("/create", upload.single("file"), async (req, res) => {
+  try {
+    const post = new Post({
+      ...req.body,
+
+      userName: req.body.userName,
+      userEmail: req.body.userEmail,
+      userId: req.body.userId,
+
+      file: req.file ? req.file.path : "",
+
+      verifiers: Array.isArray(req.body.verifiers)
+        ? req.body.verifiers
+        : [req.body.verifiers],
+    });
+
+    await post.save();
+
+    res.json({ message: "Post created", post });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 router.get("/verifier", verifyVerifier, async (req, res) => {
   try {
