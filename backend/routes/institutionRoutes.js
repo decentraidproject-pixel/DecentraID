@@ -3,6 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const multer = require("multer");   
+const upload = multer({ dest: "uploads/" });
+
 const InstitutionFull = require("../models/InstitutionFull");
 const InstitutionBasic = require("../models/InstitutionBasic");
 const ApprovedInstitution = require("../models/ApprovedInstitution");
